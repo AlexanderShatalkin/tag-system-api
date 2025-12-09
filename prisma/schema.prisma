@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Article {
+  id        Int     @id @default(autoincrement())
+  name      String
+  local_path String
+  web_path   String
+  source_id  Int
+
+  source     Source  @relation(fields: [source_id], references: [id])
+  tagScores  Tag_Score[]
+
+  @@map("Article")
+}
+
+model Source {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  articles    Article[]
+
+  @@map("Source")
+}
+
+model Tag_Score {
+  article_id Int
+  tag_id     Int
+  weight     Int
+  model_id   Int
+
+  article Article @relation(fields: [article_id], references: [id])
+  tag     Tag     @relation(fields: [tag_id], references: [id])
+  model   Model   @relation(fields: [model_id], references: [id])
+
+  @@id([article_id, tag_id, model_id])
+  @@map("Tag_Score")
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String
+  type String
+
+  scores Tag_Score[]
+
+  @@map("Tag")
+}
+
+model Model {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  tagScores Tag_Score[]
+
+  @@map("Model")
+}
