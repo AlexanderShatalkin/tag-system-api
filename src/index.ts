@@ -1,39 +1,55 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import { parseMDN } from "./parser/MDN";
 import { scanDirectory } from "./utils/scanDirectory";
 import { getTags } from "./tagging/groqTagApi";
 import { readFile } from "fs/promises";
+import { prisma } from "./prisma/client";
+import { swagger } from "@elysiajs/swagger";
+import { seedTags } from "./utils/seedTags";
 
 const app = new Elysia()
+  .use(
+    swagger({
+      documentation: {
+        info: {
+          title: "Tag system api",
+          version: "1.0.0",
+        },
+      },
+    })
+  )
+  .group("/internal/seed", (app) => 
+    app.
+      post("/tags", async () => {
+        
+        
+        return seedTags();
+      })
+  )
   .group("/internal/parse", (app) =>
     app
       .post('/parseMDN', async () => {
         parseMDN();
       }) 
   )
-  .group("interlnal/tag", (app) => 
-  app.get("test", async () => {
+  .group("/internal/tag", (app) => 
+  app.post("/tagArticleById/:id", async ({params}) => {
+    const articleId = Number(params.id)
+    const article = await prisma.article.findUnique({
+      where: {
+        id: articleId,
+      }
+    });
 
+    return article;
+  },
+  {
+    params: t.Object({
+      id: t.Numeric(),
+    })
+  }
 
-    const article = await readFile("./docs/mdn/en-us/docs/web/javascript/guide/index.md", "utf8");
-    const tags = await readFile("./src/tags/tags.json", "utf8");
-  const prompt = `
-      Проанализируй статью и присвой ей теги из категории со значениями от 0 до 100:
-
-      Теги (tag.json):
-      ${tags}
-
-      Статья (index.md):
-      ${article}
-
-      Ответ верни строго в виде JSON.
-        `.trim();
-
-    const response  = await getTags(prompt)
-    console.log(response.output_text)
-    console.log(response)
-
-  })
+  )
   )
   .get("/", () => "Hello Elysia")
   .listen(3000);
