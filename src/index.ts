@@ -21,9 +21,7 @@ const app = new Elysia()
   .group("/internal/seed", (app) => 
     app.
       post("/tags", async () => {
-        
-        
-        return seedTags();
+        seedTags();
       })
   )
   .group("/internal/parse", (app) =>
@@ -41,7 +39,16 @@ const app = new Elysia()
       }
     });
 
-    return article;
+
+    if (article){
+      const tags =  await getTags(article);
+      
+      return tags;
+    }
+    else{
+      throw new Error("article not fount");
+    }
+
   },
   {
     params: t.Object({
