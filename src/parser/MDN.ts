@@ -1,6 +1,6 @@
 import { t } from "elysia";
 import { MdFile, scanDirectory } from "../utils/scanDirectory";
-import { ArticleRecord } from "../interface/ArtcileREcord";
+import { ArticleRecord } from "../interface/ArtcileRecord";
 import { prisma } from "../prisma/client";
 
 

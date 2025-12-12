@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
-    "elysia": "latest"
+    "elysia": "latest",
+    "openai": "^6.10.0"
   },
   "devDependencies": {
     "bun-types": "latest",
