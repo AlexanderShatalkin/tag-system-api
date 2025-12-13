@@ -12,6 +12,8 @@ model Article {
   name      String
   local_path String
   web_path   String
+  content String
+  content_type String
   source_id  Int
 
   source     Source  @relation(fields: [source_id], references: [id])
