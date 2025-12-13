@@ -5,8 +5,7 @@ import { build } from "bun";
 import { Article } from "@prisma/client";
 import { prisma } from "../prisma/client";
 
-async function buildPromt(articleUrl: string, jsonTagsUrl="./src/tags/tags.json"): Promise<string>{
-    const article = await readFile(articleUrl, "utf8");
+async function buildPromt(article: string, jsonTagsUrl="./src/tags/tags.json"): Promise<string>{
     const tags = await readFile(jsonTagsUrl, "utf8");
     return  `
       Проанализируй статью и присвой ей теги из категории со значениями от 0 до 100:
@@ -130,12 +129,11 @@ export function safeParseTagScores(raw: string): Record<string, Record<string, n
 
 
 export async function getTags(article: Article){
-    const promt = await buildPromt(article.local_path);
+    const promt = await buildPromt(article.content);
     const client = new OpenAI({
         apiKey: process.env.GROQ_API_KEY,
         baseURL: "https://api.groq.com/openai/v1",
     });
-
     const response = await client.responses.create({
         model: "openai/gpt-oss-20b",
         input: promt

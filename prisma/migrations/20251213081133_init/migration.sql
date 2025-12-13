@@ -4,6 +4,8 @@ CREATE TABLE "Article" (
     "name" TEXT NOT NULL,
     "local_path" TEXT NOT NULL,
     "web_path" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "content_type" TEXT NOT NULL,
     "source_id" INTEGER NOT NULL,
 
     CONSTRAINT "Article_pkey" PRIMARY KEY ("id")
