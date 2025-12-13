@@ -130,6 +130,8 @@ export function safeParseTagScores(raw: string): Record<string, Record<string, n
 
 export async function getTags(article: Article){
     const promt = await buildPromt(article.content);
+    console.log(promt)
+    
     const client = new OpenAI({
         apiKey: process.env.GROQ_API_KEY,
         baseURL: "https://api.groq.com/openai/v1",
@@ -138,6 +140,8 @@ export async function getTags(article: Article){
         model: "openai/gpt-oss-20b",
         input: promt
     });
+
+    console.log(response)
 
     const json = response.output_text;
 

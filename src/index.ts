@@ -39,7 +39,6 @@ const app = new Elysia()
       }
     });
 
-
     if (article){
       const tags =  await getTags(article);
       
@@ -59,6 +58,55 @@ const app = new Elysia()
   )
   )
   .get("/", () => "Hello Elysia")
+  .get("/getArticlesByTag", async ({query}) => {
+    const { tag, minScore } = query
+
+    const articles = await prisma.article.findMany({
+      where: {
+        tagScores: {
+          some: {
+            AND: [
+              {
+                tag: {
+                  name: tag
+                }
+              },
+              {
+                weight: {
+                  gt: minScore
+                }
+              }
+            ]
+          }
+        }
+      },
+      include: {
+        tagScores: {
+          include: {
+            tag: true,
+            model: true
+          },
+          where: {
+            weight: {
+              gt: minScore
+            },
+            tag: {
+              name: tag
+            }
+          }
+        },
+        source: true
+      }
+    })
+
+    return articles
+  },
+  {
+    query: t.Object({
+      tag: t.String(),
+      minScore: t.Numeric(),
+    })
+  })
   .listen(3000);
 
 console.log(
