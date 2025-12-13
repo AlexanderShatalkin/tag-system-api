@@ -6,6 +6,7 @@ import { readFile } from "fs/promises";
 import { prisma } from "./prisma/client";
 import { swagger } from "@elysiajs/swagger";
 import { seedTags } from "./utils/seedTags";
+import {openapi} from "@elysiajs/openapi"
 
 const app = new Elysia()
   .use(
@@ -18,6 +19,7 @@ const app = new Elysia()
       },
     })
   )
+  .use(openapi())
   .group("/internal/seed", (app) => 
     app.
       post("/tags", async () => {
@@ -57,47 +59,65 @@ const app = new Elysia()
 
   )
   )
-  .get("/", () => "Hello Elysia")
   .get("/getArticlesByTag", async ({query}) => {
-    const { tag, minScore } = query
+    const { tag, minScore, model, source } = query
 
-    const articles = await prisma.article.findMany({
-      where: {
-        tagScores: {
-          some: {
-            AND: [
-              {
-                tag: {
-                  name: tag
-                }
-              },
-              {
-                weight: {
-                  gt: minScore
-                }
+  const articles = await prisma.article.findMany({
+    where: {
+      ...(source && {
+        source: {
+          name: source
+        }
+      }),
+
+      tagScores: {
+        some: {
+          AND: [
+            {
+              tag: {
+                name: tag
               }
-            ]
-          }
+            },
+            {
+              weight: {
+                gt: minScore
+              }
+            },
+            ...(model
+              ? [{
+                  model: {
+                    name: model
+                  }
+                }]
+              : [])
+          ]
+        }
+      }
+    },
+
+    include: {
+      tagScores: {
+        where: {
+          weight: {
+            gt: minScore
+          },
+          tag: {
+            name: tag
+          },
+          ...(model && {
+            model: {
+              name: model
+            }
+          })
+        },
+        include: {
+          tag: true,
+          model: true
         }
       },
-      include: {
-        tagScores: {
-          include: {
-            tag: true,
-            model: true
-          },
-          where: {
-            weight: {
-              gt: minScore
-            },
-            tag: {
-              name: tag
-            }
-          }
-        },
-        source: true
-      }
-    })
+      source: true
+    }
+  })
 
     return articles
   },
@@ -105,8 +125,65 @@ const app = new Elysia()
     query: t.Object({
       tag: t.String(),
       minScore: t.Numeric(),
+      model: t.Optional(t.String()),
+      source: t.Optional(t.String())
     })
   })
+  .get("/tags", async () => {
+    const tags = prisma.tag.findMany({
+
+    });
+    return tags;
+  })
+  .get("/getArticleTags", async ({query}) => {
+    const {id} = query
+     const article = await prisma.article.findUnique({
+    where: { id: id },
+    select: {
+      id: true,
+      name: true,
+      tagScores: {
+        where: {
+          weight: {
+            gt: 0,
+          },
+        },
+        select: {
+          weight: true,
+          tag: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+          model: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!article) return [];
+
+  return article.tagScores.map(ts => ({
+    tagId: ts.tag.id,
+    tagName: ts.tag.name,
+    tagType: ts.tag.type,
+    weight: ts.weight,
+    model: ts.model.name,
+  }));
+  },
+  {
+    query: t.Object({
+      id: t.Number()
+    })
+  }
+)
   .listen(3000);
 
 console.log(
