@@ -36,6 +36,11 @@ createdb -U <user> <dbname>
 psql -U <user> -c "CREATE DATABASE dbname"
 ```
 
+**optional** (restoring db from dump)
+```
+pg_restore -U <user> -d <dbname> dump.sql
+```
+
 Create .env file in the project root
 
 | Name         | Description                  | Example                                          |
@@ -44,10 +49,7 @@ Create .env file in the project root
 | GROQ_API_KEY | API key to LLM               |                                                  |
 | PORT         | API port                     | 3000                                             |
 
-**optional** (restoring db from dump)
-```
-pg_restore -U <user> -d <dbname> dump.sql
-```
+
 
 
 import prisma db from scheme
