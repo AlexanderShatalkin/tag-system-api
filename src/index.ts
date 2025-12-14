@@ -7,6 +7,7 @@ import { prisma } from "./prisma/client";
 import { swagger } from "@elysiajs/swagger";
 import { seedTags } from "./utils/seedTags";
 import {openapi} from "@elysiajs/openapi"
+import { crawlPythonLibrary, parsePythonDocToMd } from "./parser/python";
 
 const app = new Elysia()
   .use(
@@ -31,6 +32,9 @@ const app = new Elysia()
       .post('/parseMDN', async () => {
         parseMDN();
       }) 
+      .post("parsePython", async () => {
+        return crawlPythonLibrary();
+      })
   )
   .group("/internal/tag", (app) => 
   app.post("/tagArticleById/:id", async ({params}) => {
