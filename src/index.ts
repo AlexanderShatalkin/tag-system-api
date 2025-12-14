@@ -9,8 +9,12 @@ import { seedTags } from "./utils/seedTags";
 import {openapi} from "@elysiajs/openapi"
 import { crawlPythonLibrary, parsePythonDocToMd } from "./parser/python";
 import 'dotenv/config'
+import { cors } from '@elysiajs/cors'
 
 const app = new Elysia()
+  .use(cors({
+    
+  }))
   .use(
     swagger({
       documentation: {
@@ -242,7 +246,4 @@ for (const article of articles) {
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
 );
-function cors(): any {
-  throw new Error("Function not implemented.");
-}
 
