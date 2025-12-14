@@ -37,7 +37,8 @@ const app = new Elysia()
       })
   )
   .group("/internal/tag", (app) => 
-  app.post("/tagArticleById/:id", async ({params}) => {
+  app
+  .post("/tagArticleById/:id", async ({params}) => {
     const articleId = Number(params.id)
     const article = await prisma.article.findUnique({
       where: {
@@ -46,6 +47,8 @@ const app = new Elysia()
     });
 
     if (article){
+      
+      
       const tags =  await getTags(article);
       
       return tags;
@@ -59,9 +62,54 @@ const app = new Elysia()
     params: t.Object({
       id: t.Numeric(),
     })
-  }
+  })
+  .post("tagArticlesByIdRange", async({body}) => {
+    const min = body.minId
+    const max = body.maxId
+    const articles = await prisma.article.findMany({
+      where:{
+        id:{
+          gte: min,
+          lte: max
+        },
+        tagScores: {
+          none: {},
+        }
+      },
+      orderBy:{
+        id: "asc"
+      }
+    })
 
-  )
+for (const article of articles) {
+  try {
+    await getTags(article)
+  } catch (error: any) {
+    if (
+      error?.code === "rate_limit_exceeded" ||
+      error?.status === 429 ||
+      error?.message?.includes("Rate limit")
+    ) {
+      
+      console.error("❌ Tokens limit reached. Stopping tagging.")
+      break 
+    }
+
+    console.error(`Error tagging article ${article.id}`, error)
+  }
+}
+
+
+
+    
+  },
+  {
+    body: t.Object({
+      minId: t.Numeric(),
+      maxId: t.Numeric(),
+    })
+  })
+  
   )
   .get("/getArticlesByTag", async ({query}) => {
     const { tag, minScore, model, source } = query
