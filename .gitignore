@@ -45,3 +45,7 @@ docs
 /src/generated/prisma
 
 .env
+
+prisma/dev.db
+prisma/*.db
+prisma/migrations/**/migration_lock.toml
