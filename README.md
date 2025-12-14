@@ -32,6 +32,8 @@ bun install
 Create PostgreSQL database
 ```
 createdb -U <user> <dbname>
+#or
+psql -U <user> -c "CREATE DATABASE dbname"
 ```
 
 Create .env file in the project root
