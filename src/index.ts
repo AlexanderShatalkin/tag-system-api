@@ -11,6 +11,7 @@ import { crawlPythonLibrary, parsePythonDocToMd } from "./parser/python";
 import 'dotenv/config'
 
 const app = new Elysia()
+  .use(cors())
   .use(
     swagger({
       documentation: {
@@ -242,3 +243,7 @@ for (const article of articles) {
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
 );
+function cors(): any {
+  throw new Error("Function not implemented.");
+}
+
