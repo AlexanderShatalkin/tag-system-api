@@ -11,7 +11,6 @@ import { crawlPythonLibrary, parsePythonDocToMd } from "./parser/python";
 import 'dotenv/config'
 
 const app = new Elysia()
-  .use(cors())
   .use(
     swagger({
       documentation: {
