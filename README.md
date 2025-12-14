@@ -53,6 +53,11 @@ Create .env file in the project root
 
 
 import prisma db from scheme
+
+```
+bunx prisma generate
+```
+
 ```
 bunx prisma migrate dev
 #or
