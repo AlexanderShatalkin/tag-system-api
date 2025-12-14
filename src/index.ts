@@ -8,6 +8,7 @@ import { swagger } from "@elysiajs/swagger";
 import { seedTags } from "./utils/seedTags";
 import {openapi} from "@elysiajs/openapi"
 import { crawlPythonLibrary, parsePythonDocToMd } from "./parser/python";
+import 'dotenv/config'
 
 const app = new Elysia()
   .use(
@@ -236,7 +237,7 @@ for (const article of articles) {
     })
   }
 )
-  .listen(3000);
+  .listen(Number(process.env.PORT) || 3000);
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
