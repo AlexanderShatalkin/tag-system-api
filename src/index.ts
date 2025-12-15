@@ -188,7 +188,14 @@ for (const article of articles) {
   })
   .get("/tags", async () => {
     const tags = prisma.tag.findMany({
-
+      orderBy: [
+        {
+          type: "asc"
+        },
+        {
+          name:"asc"
+        }
+      ]
     });
     return tags;
   })
