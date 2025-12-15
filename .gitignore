@@ -53,3 +53,6 @@ prisma/migrations/**/migration_lock.toml
 /dist
 /generated/prisma
 /prisma/migrations
+/generated/generated
+/generated
+/prisma/generated
