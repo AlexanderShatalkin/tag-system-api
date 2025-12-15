@@ -1,9 +1,12 @@
 {
   "name": "tag_system_api",
   "version": "1.0.50",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.0",
@@ -22,7 +25,8 @@
     "@types/node": "^25.0.1",
     "@types/turndown": "^5.0.6",
     "bun-types": "latest",
-    "prisma": "^6.19.0"
+    "prisma": "^6.19.0",
+    "typescript": "^5.9.3"
   },
   "module": "src/index.js"
 }

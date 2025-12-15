@@ -49,3 +49,5 @@ docs
 prisma/dev.db
 prisma/*.db
 prisma/migrations/**/migration_lock.toml
+
+/dist

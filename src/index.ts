@@ -241,7 +241,7 @@ for (const article of articles) {
     })
   }
 )
-  .listen(Number(process.env.PORT) || 3000);
+  .listen(Number(process.env.BACKEND_PORT) || 3000);
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
