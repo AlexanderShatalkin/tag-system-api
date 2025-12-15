@@ -241,6 +241,7 @@ for (const article of articles) {
     })
   }
 )
+  .get("/health", () => ({ status: "ok" }))
   .listen(Number(process.env.BACKEND_PORT) || 3000);
 
 console.log(
