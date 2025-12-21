@@ -10,6 +10,10 @@ import {openapi} from "@elysiajs/openapi"
 import { crawlPythonLibrary, parsePythonDocToMd } from "./parser/python";
 import 'dotenv/config'
 import { cors } from '@elysiajs/cors'
+import { crawlPostgresDocs } from "./parser/postges";
+import { crawlPhpDocs } from "./parser/php";
+import { crawlPrismaDocs } from "./parser/prisma";
+import { crawlElysiaDocs } from "./parser/elysia";
 
 const app = new Elysia()
   .use(cors({
@@ -39,6 +43,18 @@ const app = new Elysia()
       }) 
       .post("parsePython", async () => {
         return crawlPythonLibrary();
+      })  
+      .post("/parsePostgres", async () => {
+        return crawlPostgresDocs();
+      })
+      .post("/parsePhp", async () => {
+        return crawlPhpDocs();
+      })
+      .post("/parsePrisma", async () => {
+        return crawlPrismaDocs();
+      })
+      .post("/parseElysia", async () => {
+        return crawlElysiaDocs();
       })
   )
   .group("/internal/tag", (app) => 
